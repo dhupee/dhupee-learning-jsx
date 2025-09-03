@@ -8,7 +8,6 @@
     };
   };
   outputs = {
-    self,
     nixpkgs,
     utils,
   }:
@@ -32,6 +31,7 @@
           nodejs_22
         ];
       in {
+        #============= DEVELOPMENT SHELL===============================#
         devShells = {
           default = pkgs.mkShell {
             buildInputs = package_list;
@@ -45,6 +45,7 @@
           };
         };
 
+        #==============BUILD STEPS====================================#
         # packages.default = pkgs.stdenv.mkDerivation {
         #   pname = "firmware";
         #   version = "0.1.0";
