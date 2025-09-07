@@ -3,6 +3,7 @@ package main
 // library list
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"strings"
@@ -14,7 +15,8 @@ import (
 
 // Youtube Download Request Body
 type youtubeDl struct {
-	YoutubeURL string `json:"youtubeUrl"`
+	YoutubeURL   string `json:"youtubeUrl"`
+	OutputFormat string `json:"outputFormat"`
 }
 
 func main() {
@@ -57,8 +59,14 @@ func getYoutubeVid(c fuego.ContextWithBody[youtubeDl]) (string, error) {
 		return "Cannot find body", err
 	}
 
+	// Default to mp4 if not declared
+	format := yt.OutputFormat
+	if format == "" {
+		format = "mp4"
+	}
+
 	// Download the actual video
-	result, err := downloadYtVid(yt.YoutubeURL)
+	result, err := downloadYtVid(yt.YoutubeURL, format)
 	if err != nil {
 		// return "Failed to download video", err
 		return result, err
@@ -70,25 +78,35 @@ func getYoutubeVid(c fuego.ContextWithBody[youtubeDl]) (string, error) {
 }
 
 // Download Youtube Vid
-func downloadYtVid(youtubeLink string) (string, error) {
+func downloadYtVid(youtubeLink string, outputFormat string) (string, error) {
 
-	// Make sure yt-dlp is installed on the machine
+	// Make sure yt-dlp, and ffmpeg is installed on the machine
 	ytdlp.MustInstall(context.TODO(), nil)
+	ytdlp.MustInstallFFmpeg(context.TODO(), nil)
 
-	// initializing ytdlp
+	// Return error message if Youtube link is empty
+	if youtubeLink == "" {
+		// return "Youtube Link is empty", nil
+		err := errors.New("empty youtube link")
+		return "", fuego.BadRequestError{Title: "Youtube Link Empty", Err: err}
+	}
+
+	// Initializing yt-dlp
 	outputFile := "%(extractor)s - %(title)s.%(ext)s"
 	outputDir := "./output/"
 
 	// Create the directory and any necessary parent directories
-	err := os.MkdirAll(outputFile, os.ModePerm)
+	err := os.MkdirAll(outputDir, os.ModePerm)
 	if err != nil {
 		log.Printf("Error creating directory: %v\n", err)
+	} else {
+		log.Println(strings.Join([]string{"Created directory: ", outputDir}, ""))
 	}
 
 	outputPath := strings.Join([]string{outputDir, outputFile}, "")
 	dl := ytdlp.New().
 		FormatSort("res,ext:mp4:m4a").
-		RecodeVideo("mp4").
+		RecodeVideo(outputFormat).
 		NoPlaylist().
 		Output(outputPath)
 
@@ -96,8 +114,8 @@ func downloadYtVid(youtubeLink string) (string, error) {
 	_, err = dl.Run(context.TODO(), youtubeLink)
 	if err != nil {
 		// panic(err)
-		return "failed", err
+		return strings.Join([]string{"Failed to download video, ", err.Error()}, ""), err
 	} else {
-		return "success", err
+		return "Video sucessfully downloaded", nil
 	}
 }
