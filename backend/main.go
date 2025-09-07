@@ -30,6 +30,7 @@ func main() {
 
 	// Endpoints
 	fuego.Get(s, "/", helloWorld)
+	fuego.Get(s, "/ping", ping)
 	fuego.Get(s, "/getYoutubeVid", getYoutubeVid)
 
 	// Run Server
@@ -42,6 +43,10 @@ func main() {
 // Hello World Endpoint
 func helloWorld(c fuego.ContextNoBody) (string, error) {
 	return "Hello, World!", nil
+}
+
+func ping(c fuego.ContextNoBody) (string, error) {
+	return "pong!", nil
 }
 
 // Get Youtube Vid Endpoint
@@ -76,7 +81,6 @@ func downloadYtVid(youtubeLink string) (string, error) {
 
 	// Create the directory and any necessary parent directories
 	err := os.MkdirAll(outputFile, os.ModePerm)
-
 	if err != nil {
 		log.Printf("Error creating directory: %v\n", err)
 	}
@@ -88,7 +92,7 @@ func downloadYtVid(youtubeLink string) (string, error) {
 		NoPlaylist().
 		Output(outputPath)
 
-	// downloading the video
+	// Downloading the video
 	_, err = dl.Run(context.TODO(), youtubeLink)
 	if err != nil {
 		// panic(err)
