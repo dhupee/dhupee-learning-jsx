@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "dhupee-learning-jsx",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
