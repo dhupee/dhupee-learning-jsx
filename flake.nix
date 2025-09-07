@@ -20,7 +20,7 @@
         };
 
         # Common packages list
-        package_list = with pkgs; [
+        common_package_list = with pkgs; [
           # general utility
           go-task
 
@@ -35,14 +35,27 @@
       in {
         #============= DEVELOPMENT SHELL===============================#
         devShells = {
+          # default shell environment
           default = pkgs.mkShell {
-            buildInputs = package_list;
+            buildInputs = common_package_list;
 
             shellHook = ''
               # make it impure by default, I don't care
               export SHELL=$(which ${pkgs.zsh})
               echo 'Development Shell Initialized'
               exec zsh
+            '';
+          };
+
+          # only has bruno in it, since it's quite heavy
+          # typical electron app
+          bruno = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              bruno
+            ];
+
+            shellHook = ''
+              echo 'bruno initialized'
             '';
           };
         };
