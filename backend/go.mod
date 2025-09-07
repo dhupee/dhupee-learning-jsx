@@ -2,7 +2,11 @@ module github.com/dhupee/dhupee-learning-jsx
 
 go 1.24.6
 
-require github.com/go-fuego/fuego v0.18.8 // direct
+require (
+	github.com/go-fuego/fuego v0.18.8
+	github.com/joho/godotenv v1.5.1
+	github.com/lrstanley/go-ytdlp v1.2.4
+)
 
 require (
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
@@ -17,10 +21,8 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/schema v1.4.1 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/lrstanley/go-ytdlp v1.2.4 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/oasdiff/yaml v0.0.0-20250309154309-f31be36b4037 // indirect
