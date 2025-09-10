@@ -15,8 +15,9 @@ import (
 
 // Youtube Download Request Body
 type youtubeDl struct {
-	YoutubeURL   string `json:"youtubeUrl"`
-	OutputFormat string `json:"outputFormat"`
+	YoutubeURL     string `json:"youtubeUrl"`
+	OutputFormat   string `json:"outputFormat"`
+	EmbedThumbnail bool   `json:"embedThumnail"`
 }
 
 func main() {
@@ -59,14 +60,18 @@ func getYoutubeVid(c fuego.ContextWithBody[youtubeDl]) (string, error) {
 		return "Cannot find body", err
 	}
 
+	/*=====================DEFAULT VALUES FOR DOWNLOADER======================================*/
+
 	// Default to mp4 if not declared
 	format := yt.OutputFormat
 	if format == "" {
 		format = "mp4"
 	}
 
+	/*=========================DEFAULT VALUES ENDS===========================================*/
+
 	// Download the actual video
-	result, err := downloadYtVid(yt.YoutubeURL, format)
+	result, err := downloadYtVid(yt.YoutubeURL, format, yt.EmbedThumbnail)
 	if err != nil {
 		// return "Failed to download video", err
 		return result, err
@@ -78,7 +83,7 @@ func getYoutubeVid(c fuego.ContextWithBody[youtubeDl]) (string, error) {
 }
 
 // Download Youtube Vid
-func downloadYtVid(youtubeLink string, outputFormat string) (string, error) {
+func downloadYtVid(youtubeLink string, outputFormat string, embedThumbnail bool) (string, error) {
 
 	// Make sure yt-dlp, and ffmpeg is installed on the machine
 	ytdlp.MustInstall(context.TODO(), nil)
@@ -91,7 +96,7 @@ func downloadYtVid(youtubeLink string, outputFormat string) (string, error) {
 		return "", fuego.BadRequestError{Title: "Youtube Link Empty", Err: err}
 	}
 
-	// Initializing yt-dlp
+	// Initializing yt-dlp output
 	outputFile := "%(extractor)s - %(title)s.%(ext)s"
 	outputDir := "./output/"
 
@@ -103,12 +108,25 @@ func downloadYtVid(youtubeLink string, outputFormat string) (string, error) {
 		log.Println(strings.Join([]string{"Created directory: ", outputDir}, ""))
 	}
 
+	// Initializing yt-dlp parameters
 	outputPath := strings.Join([]string{outputDir, outputFile}, "")
 	dl := ytdlp.New().
 		FormatSort("res,ext:mp4:m4a").
 		RecodeVideo(outputFormat).
 		NoPlaylist().
 		Output(outputPath)
+
+	// Additional parameters
+	// TODO: TEST IT
+	if embedThumbnail {
+		dl = dl.EmbedThumbnail()
+	}
+
+	// if embedSubs {
+	// 	dl = dl.EmbedSubs()
+	// } else if embedThumbnail {
+	// 	dl = dl.EmbedThumbnail()
+	// }
 
 	// Downloading the video
 	_, err = dl.Run(context.TODO(), youtubeLink)
