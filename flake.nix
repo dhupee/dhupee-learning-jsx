@@ -30,7 +30,6 @@
 
           # Frontend
           nodejs_22
-          pnpm
         ];
       in {
         #============= DEVELOPMENT SHELL===============================#
