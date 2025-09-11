@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <div class="justify-around">
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} class="logo" alt="Vite logo" />
         </a>
@@ -28,6 +28,7 @@ function App() {
       <p class="read-the-docs">
         Click on the Vite and Solid logos to learn more
       </p>
+      <p class="bg-red-500">hello</p>
     </>
   )
 }
