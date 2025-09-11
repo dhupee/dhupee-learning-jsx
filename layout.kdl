@@ -1,6 +1,6 @@
 layout {
     cwd "~"
-    tab name="Air/Bruno" focus=true hide_floating_panes=true {
+    tab name="Live" focus=true hide_floating_panes=true {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
@@ -15,7 +15,7 @@ layout {
             plugin location="zellij:status-bar"
         }
     }
-    tab name="Backend" hide_floating_panes=true {
+    tab name="Main" hide_floating_panes=true {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
