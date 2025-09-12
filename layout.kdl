@@ -4,12 +4,10 @@ layout {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane split_direction="vertical" {
-            pane command="zellij" focus=true size="50%" {
-                args "action" "dump-layout"
-                start_suspended true
-            }
-            pane size="50%"
+        pane size="50%"
+        pane command="zellij" cwd="~" focus=true size="50%" {
+            args "action" "dump-layout"
+            start_suspended true
         }
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
@@ -19,7 +17,7 @@ layout {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane cwd="backend"
+        pane cwd="~"
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
@@ -46,7 +44,7 @@ layout {
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        pane
+        pane cwd="~"
         pane size=1 borderless=true {
             plugin location="zellij:status-bar"
         }
@@ -203,61 +201,61 @@ layout {
     }
     swap_floating_layout name="enlarged" {
         floating_panes max_panes=10 {
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 1
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 2
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 3
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 4
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 5
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 6
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 7
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 8
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x "5%"
                 y 9
             }
-            pane {
+            pane cwd="~" {
                 height "90%"
                 width "90%"
                 x 10
@@ -267,60 +265,60 @@ layout {
     }
     swap_floating_layout name="spread" {
         floating_panes max_panes=1 {
-            pane {
+            pane cwd="~" {
                 x "50%"
                 y "50%"
             }
         }
         floating_panes max_panes=2 {
-            pane {
+            pane cwd="~" {
                 width "45%"
                 x "1%"
                 y "25%"
             }
-            pane {
+            pane cwd="~" {
                 width "45%"
                 x "50%"
                 y "25%"
             }
         }
         floating_panes max_panes=3 {
-            pane {
+            pane cwd="~" {
                 height "45%"
                 width "45%"
                 y "55%"
             }
-            pane {
+            pane cwd="~" {
                 width "45%"
                 x "1%"
                 y "1%"
             }
-            pane {
+            pane cwd="~" {
                 width "45%"
                 x "50%"
                 y "1%"
             }
         }
         floating_panes max_panes=4 {
-            pane {
+            pane cwd="~" {
                 height "45%"
                 width "45%"
                 x "1%"
                 y "55%"
             }
-            pane {
+            pane cwd="~" {
                 height "45%"
                 width "45%"
                 x "50%"
                 y "55%"
             }
-            pane {
+            pane cwd="~" {
                 height "45%"
                 width "45%"
                 x "1%"
                 y "1%"
             }
-            pane {
+            pane cwd="~" {
                 height "45%"
                 width "45%"
                 x "50%"
