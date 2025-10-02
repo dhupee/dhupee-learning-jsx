@@ -54,7 +54,7 @@
             ];
 
             shellHook = ''
-              echo 'bruno initialized'
+              echo 'Bruno Initialized'
             '';
           };
         };
