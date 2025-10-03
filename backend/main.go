@@ -20,6 +20,10 @@ type youtubeDl struct {
 	EmbedThumbnail bool   `json:"embedThumnail"`
 }
 
+type musicDl struct {
+	URL string `json:"url"`
+}
+
 func main() {
 	// Load the .env file
 	err := godotenv.Load()
@@ -35,6 +39,7 @@ func main() {
 	fuego.Get(s, "/", helloWorld)
 	fuego.Get(s, "/ping", ping)
 	fuego.Get(s, "/getYoutubeVid", getYoutubeVid)
+	fuego.Get(s, "/getMusic", getMusic)
 
 	// Run Server
 	err = s.Run()
@@ -79,6 +84,71 @@ func getYoutubeVid(c fuego.ContextWithBody[youtubeDl]) (string, error) {
 		// return strings.Join([]string{"Success Download Video to: ", outputPath}, ""), err
 		// return "Video Sucessfully Downloaded", err
 		return result, err
+	}
+}
+
+func getMusic(c fuego.ContextWithBody[musicDl]) (string, error) {
+	dl, err := c.Body()
+	if err != nil {
+		return "Cannot find body", err
+	}
+
+	// Download the actual video
+	result, err := downloadYtMusic(dl.URL)
+	if err != nil {
+		// return "Failed to download video", err
+		return result, err
+	} else {
+		// return strings.Join([]string{"Success Download Video to: ", outputPath}, ""), err
+		// return "Video Sucessfully Downloaded", err
+		return result, err
+	}
+}
+
+// Download Youtube and Save it as Mp3
+func downloadYtMusic(youtubeLink string) (string, error) {
+	// Make sure yt-dlp, and ffmpeg is installed on the machine
+	ytdlp.MustInstall(context.TODO(), nil)
+	ytdlp.MustInstallFFmpeg(context.TODO(), nil)
+
+	// Return error message if Youtube link is empty
+	if youtubeLink == "" {
+		// return "Youtube Link is empty", nil
+		err := errors.New("empty youtube link")
+		return "", fuego.BadRequestError{Title: "Youtube Link Empty", Err: err}
+	}
+
+	//Max File Size
+	maxFileSize := "50M"
+
+	// Initializing yt-dlp output
+	outputFile := "%(extractor)s - %(title)s.%(ext)s"
+	outputDir := "./output/"
+
+	// Create the directory and any necessary parent directories
+	err := os.MkdirAll(outputDir, os.ModePerm)
+	if err != nil {
+		log.Printf("Error creating directory: %v\n", err)
+	} else {
+		log.Println(strings.Join([]string{"Created directory: ", outputDir}, ""))
+	}
+
+	// Initializing yt-dlp parameters
+	outputPath := strings.Join([]string{outputDir, outputFile}, "")
+	dl := ytdlp.New().
+		FormatSort("res,ext:mp4:m4a").
+		NoPlaylist().
+		ExtractAudio().
+		MaxFileSize(maxFileSize).
+		Output(outputPath)
+
+	// Downloading the video
+	_, err = dl.Run(context.TODO(), youtubeLink)
+	if err != nil {
+		// panic(err)
+		return strings.Join([]string{"Failed to download video, ", err.Error()}, ""), err
+	} else {
+		return "Video sucessfully downloaded", nil
 	}
 }
 
