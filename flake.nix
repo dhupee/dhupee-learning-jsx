@@ -65,12 +65,15 @@
           default = pkgs.mkShell {
             packages =
               [
-                # Python packages
+                # For UV
                 (editablePythonSet.mkVirtualEnv "dh-learning-jsx-dev-env" workspace.deps.all)
                 pkgs.uv
               ]
               ++ (with pkgs; [
+                # Others
                 nodejs_22
+
+                ffmpeg
               ]);
             env = {
               UV_NO_SYNC = "1";
