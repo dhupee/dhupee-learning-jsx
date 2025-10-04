@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+
+# Virtual environments
+.env
+venv/
+env/
+/venv/
+/env/
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+
+# Testing/Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and temporary files
+*.log
+*.tmp
+temp/
+
+# Jupyter Notebook specific files
+.ipynb_checkpoints/
+
+# Database files (if applicable, e.g., for Django/Flask)
+*.sqlite3
+db.sqlite3
+
+# Packaging and distribution
+*.egg
+*.whl
