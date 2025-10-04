@@ -1,77 +1,102 @@
 {
-  description = "dhupee learning JSX Front End with Go Backend";
+  description = "dhupee testing uv2nix";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-    utils = {
-      url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    flake-utils.url = "github:numtide/flake-utils";
+
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
+
   outputs = {
-    self,
     nixpkgs,
-    utils,
+    flake-utils,
+    pyproject-nix,
+    uv2nix,
+    pyproject-build-systems,
+    ...
   }:
-    utils.lib.eachDefaultSystem (
+    flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
         };
 
-        # Common packages list
-        common_package_list = with pkgs; [
-          # general utility
-          go-task
+        # Load workspace and create overlays
+        workspace = uv2nix.lib.workspace.loadWorkspace {
+          # always point the root towards your UV project root
+          workspaceRoot = ./backend;
+        };
+        overlay = workspace.mkPyprojectOverlay {sourcePreference = "wheel";};
+        editableOverlay = workspace.mkEditablePyprojectOverlay {root = "$REPO_ROOT";};
 
-          # Backend
-          go
-          air
+        # Create Python package set
+        pythonSet =
+          (pkgs.callPackage pyproject-nix.build.packages {
+            python = pkgs.python312;
+          }).overrideScope (
+            pkgs.lib.composeManyExtensions [
+              pyproject-build-systems.overlays.wheel
+              overlay
+            ]
+          );
 
-          # Frontend
-          nodejs_22
-        ];
+        # Create editable Python set for dev shell
+        editablePythonSet = pythonSet.overrideScope editableOverlay;
       in {
-        #============= DEVELOPMENT SHELL===============================#
         devShells = {
-          # default shell environment
           default = pkgs.mkShell {
-            buildInputs = common_package_list;
-
+            packages =
+              [
+                # Python packages
+                (editablePythonSet.mkVirtualEnv "dh-learning-jsx-dev-env" workspace.deps.all)
+                pkgs.uv
+              ]
+              ++ (with pkgs; [
+                nodejs_22
+              ]);
+            env = {
+              UV_NO_SYNC = "1";
+              UV_PYTHON = editablePythonSet.python.interpreter;
+              UV_PYTHON_DOWNLOADS = "never";
+            };
             shellHook = ''
-              # make it impure by default, I don't care
+              unset PYTHONPATH
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
               export SHELL=$(which ${pkgs.zsh})
-              echo 'Development Shell Initialized'
+              echo "Development Shell Initialized"
               exec zsh
             '';
           };
 
-          # only has bruno in it, since it's quite heavy
-          # typical electron app
           bruno = pkgs.mkShell {
-            buildInputs = with pkgs; [
+            packages = with pkgs; [
               bruno
             ];
-
             shellHook = ''
-              echo 'Bruno Initialized'
+              echo "Bruno Initialized"
             '';
           };
         };
 
-        #==============BUILD STEPS====================================#
-        # packages.default = pkgs.stdenv.mkDerivation {
-        #   pname = "firmware";
-        #   version = "0.1.0";
-        #   src = ./.;
-        #   sandbox = false;
-        #   buildInputs = with pkgs; [
-        #     platformio-core
-        #     esptool
-        #   ];
-        #   buildPhase = "platformio run";
-        #   installPhase = "mkdir -p $out && cp -r .pio/build $out/";
-        # };
+        packages.default = pythonSet.mkVirtualEnv "dh-learning-jsx-env" workspace.deps.default;
       }
     );
 }
