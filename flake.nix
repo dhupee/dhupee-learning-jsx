@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
     pyproject-nix = {
@@ -26,6 +27,7 @@
 
   outputs = {
     nixpkgs,
+    nixpkgs-unstable,
     flake-utils,
     pyproject-nix,
     uv2nix,
@@ -35,6 +37,11 @@
     flake-utils.lib.eachDefaultSystem (
       system: let
         pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+
+        pkgs-unstable = import nixpkgs-unstable {
           inherit system;
           config.allowUnfree = true;
         };
@@ -69,16 +76,22 @@
                 (editablePythonSet.mkVirtualEnv "dh-learning-jsx-dev-env" workspace.deps.all)
                 pkgs.uv
               ]
+              # Other packages with stable packages
               ++ (with pkgs; [
                 # Javascripts
                 nodejs_22
 
-                # Dependencies
-                ffmpeg
-
                 # Dev Utils
                 go-task
-              ]);
+              ])
+              # Other packages with unstable packages
+              ++ (
+                with pkgs-unstable; [
+                  # Dependencies
+                  yt-dlp
+                  ffmpeg
+                ]
+              );
             env = {
               UV_NO_SYNC = "1";
               UV_PYTHON = editablePythonSet.python.interpreter;
