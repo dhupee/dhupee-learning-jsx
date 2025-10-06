@@ -70,10 +70,14 @@
                 pkgs.uv
               ]
               ++ (with pkgs; [
-                # Others
+                # Javascripts
                 nodejs_22
 
+                # Dependencies
                 ffmpeg
+
+                # Dev Utils
+                go-task
               ]);
             env = {
               UV_NO_SYNC = "1";
