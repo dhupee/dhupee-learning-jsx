@@ -1,0 +1,21 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  # Roots
+  default:
+    cmds:
+      - nix develop
+    silent: true
+    desc: "run Nix Shell"
+
+  # Backend
+  backend-dev:
+    cmds:
+      - fastapi dev ./backend/main.py
+    silent: true
+    desc: "run development server for the backend"
