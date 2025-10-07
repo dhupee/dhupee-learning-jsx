@@ -1,0 +1,22 @@
+meta {
+  name: Get Music
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{API_URL}}:{{API_PORT}}/getMusic
+  body: json
+  auth: inherit
+}
+
+headers {
+  accept: application/json
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "URL": "https://www.youtube.com/watch?v=4fZNU-T8rFM&list=RD4fZNU-T8rFM&start_radio=1"
+  }
+}
