@@ -11,7 +11,12 @@ tasks:
     cmds:
       - nix develop
     silent: true
-    desc: "run Nix Shell"
+    desc: "run default Nix Shell"
+
+  bruno:
+    cmd: nix develop .#bruno
+    silent: true
+    desc: "run Nix Shell for Bruno"
 
   # Backend
   backend-dev:
