@@ -76,7 +76,7 @@ def download_from_youtube(url: str) -> tuple[bool, str]:
         # "outtmpl": "%(title)s.%(ext)s",
         "outtmpl": os.path.join(OUTPUT_DIR, "%(title)s.%(ext)s"),
         "noplaylist": True,
-        "cookiesfrombrowser": ("firefox",),
+        "cookiesfrombrowser": ("chromium",),
         # post process downloaded video, FFmpeg magic
         "postprocessors": [
             {
