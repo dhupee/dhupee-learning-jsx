@@ -90,6 +90,7 @@
                   # Dependencies
                   yt-dlp
                   ffmpeg
+                  chromium
                 ]
               );
             env = {
